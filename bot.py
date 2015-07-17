@@ -24,16 +24,17 @@ irc.send("NICK %s\n" %nick)
 
 joinChan(channel)
 
-while alive:
-    ircmsg = irc.recv(2048)
-    ircmsg = ircmsg.strip('\n\r')
-    print ircmsg
+if __name__ == "__main__":
+    while alive:
+        ircmsg = irc.recv(2048)
+        ircmsg = ircmsg.strip('\n\r')
+        print ircmsg
 
-    if ":!status" in ircmsg:
-        irc.send(chanMsg+"ALL SYSTEMS ONLINE\n")
+        if ":!status" in ircmsg:
+            irc.send(chanMsg+"ALL SYSTEMS ONLINE\n")
 
-    if ircmsg.find(":Hello "+nick) != -1:
-        irc.send(chanMsg+"Hello!\n")
+        if ircmsg.find(":Hello "+nick) != -1:
+            irc.send(chanMsg+"Hello!\n")
 
-    if ircmsg.find("PING :") != -1:
-        ping()
+        if ircmsg.find("PING :") != -1:
+            ping()
