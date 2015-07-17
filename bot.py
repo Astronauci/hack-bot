@@ -4,37 +4,41 @@ import socket
 network = 'irc.freenode.net'
 channel = '#astronauci'
 nick = 'R2G2'
-chanMsg = "PRIVMSG %s :" %channel
+chanMsg = "PRIVMSG %s :" % channel
 
-alive = True
+class HackBot(object):
 
-def ping():
-    irc.send("PONG :Pong\n")
+    def __init__(self, network, channel, nick):
+        self.network = network
+        self.channel = channel
+        self.nick = nick
+        self.irc = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        self.irc.connect((network, 6667))
+        self.irc.send("")
+        self.irc.send("USER %s %s %s :salty bot\n" % (self.nick, self.nick, self.nick))
+        self.irc.send("NICK %s\n" % self.nick)
+        self.irc.send("JOIN %s\n" % self.channel)
 
-def joinChan(chan):
-    irc.send("JOIN %s\n" %chan)
+    def ping(self):
+        self.irc.send("PONG :Pong\n")
 
-def sendMsg(msg):
-    irc.send("PRIVMSG %s :%s\n" % channel, msg)
+    def sendMsg(self, msg):
+        self.irc.send("PRIVMSG %s :%s\n" % channel, msg)
 
-irc = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-irc.connect((network,6667))
-irc.send("USER %s %s %s :salty bot\n" %(nick,nick,nick))
-irc.send("NICK %s\n" %nick)
+    def check_for_command(self, irc_msg, command, return_command):
+        if irc_msg.find(command) != -1:
+            return return_command()
 
-joinChan(channel)
+    def main_loop(self):
+        alive = True
+        while alive:
+            self.ircmsg = self.irc.recv(2048)
+            self.ircmsg = self.ircmsg.strip('\n\r')
+
+            if self.ircmsg.find("PING :") != -1:
+                self.ping()
 
 if __name__ == "__main__":
-    while alive:
-        ircmsg = irc.recv(2048)
-        ircmsg = ircmsg.strip('\n\r')
-        print ircmsg
-
-        if ":!status" in ircmsg:
-            irc.send(chanMsg+"ALL SYSTEMS ONLINE\n")
-
-        if ircmsg.find(":Hello "+nick) != -1:
-            irc.send(chanMsg+"Hello!\n")
-
-        if ircmsg.find("PING :") != -1:
-            ping()
+    r2g2 = HackBot(network, channel, nick)
+    print r2g2.__dict__
+    r2g2.main_loop()
