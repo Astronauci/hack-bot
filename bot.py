@@ -68,7 +68,7 @@ class HackBot(object):
     def main_loop(self):
         alive = True
         print "Running main loop"
-        self.thread = threading.Thread(target=self.start_server())
+        self.thread = threading.Thread(target=self.start_server)
         self.thread.start()
         print "Serving at port {}".format(self.port)
         self.sendMsg("Established connection")
