@@ -69,6 +69,7 @@ class HackBot(object):
         alive = True
         logging.warning("Running main loop")
         self.thread = threading.Thread(target=self.start_server)
+        self.thread.daemon = True
         self.thread.start()
         self.sendMsg("Hello world!")
         while alive:
