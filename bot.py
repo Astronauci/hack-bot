@@ -49,7 +49,7 @@ class HackBot(object):
         print "Connected!"
 
     def ping(self):
-        print "Got pinged, returning"
+        logging.warning("ping")
         self.irc.send("PONG :Pong\n")
 
     def sendMsg(self, msg):
@@ -67,10 +67,9 @@ class HackBot(object):
 
     def main_loop(self):
         alive = True
-        print "Running main loop"
+        logging.warning("Running main loop")
         self.thread = threading.Thread(target=self.start_server)
         self.thread.start()
-        print "Serving at port {}".format(self.port)
         self.sendMsg("Hello world!")
         while alive:
             self.ircmsg = self.irc.recv(2048)
