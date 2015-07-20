@@ -71,8 +71,6 @@ class HackBot(object):
         self.thread = threading.Thread(target=self.start_server)
         self.thread.start()
         print "Serving at port {}".format(self.port)
-        self.sendMsg("Established connection")
-        self.sendMsg("Running main loop...")
         self.sendMsg("Hello world!")
         while alive:
             self.ircmsg = self.irc.recv(2048)
