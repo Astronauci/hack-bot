@@ -1,4 +1,7 @@
 import socket
+import SimpleHTTPServer
+import SocketServer
+import threading
 #from bot_config import *
 
 network = 'irc.freenode.net'
@@ -31,9 +34,18 @@ class HackBot(object):
         if irc_msg.find(command) != -1:
             return_command()
 
+    def start_server(self):
+        self.port = 9000
+        self.handler = SimpleHTTPServer.SimpleHTTPRequestHandler
+        self.httpd = SocketServer.TCPServer(("", self.port), self.handler)
+        self.httpd.serve_forever()
+
     def main_loop(self):
         alive = True
         print "Running main loop"
+        self.thread = threading.Thread(target=self.start_server())
+        self.thread.start()
+        print "Serving at port {}".format(self.port)
         self.sendMsg("Established connection")
         self.sendMsg("Running main loop...")
         self.sendMsg("Hello world!")
