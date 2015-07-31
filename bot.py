@@ -1,21 +1,17 @@
 import cgi
 import logging
 import socket
-import SimpleHTTPServer
-import SocketServer
+import http.server
+import socketserver
 import threading
+import queue
 #from bot_config import *
 
 network = 'irc.freenode.net'
 channel = '#astronauci'
 nick = 'R2G2'
 
-class ServerHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
-
-    def do_GET(self):
-        logging.warning('get started')
-        logging.warning(self.headers)
-        SimpleHTTPServer.SimpleHTTPRequestHandler.do_GET(self)
+class ServerHandler(http.server.SimpleHTTPRequestHandler):
 
     def do_POST(self):
         logging.warning('post started')
@@ -31,7 +27,7 @@ class ServerHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
         for item in form.list:
             logging.warning(item)
         logging.warning("\n")
-        SimpleHTTPServer.SimpleHTTPRequestHandler.do_GET(self)
+        http.server.SimpleHTTPRequestHandler.do_GET(self)
 
 class HackBot(object):
 
@@ -40,13 +36,13 @@ class HackBot(object):
         self.channel = channel
         self.nick = nick
         self.irc = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        print "Estabilishing connection..."
+        print("Estabilishing connection...")
         self.irc.connect((network, 6667))
         self.irc.send("")
         self.irc.send("USER %s %s %s :salty bot\n" % (self.nick, self.nick, self.nick))
         self.irc.send("NICK %s\n" % self.nick)
         self.irc.send("JOIN %s\n" % self.channel)
-        print "Connected!"
+        print("Connected!")
 
     def ping(self):
         logging.warning("ping")
@@ -62,7 +58,10 @@ class HackBot(object):
     def start_server(self):
         self.port = 9000
         self.handler = ServerHandler
-        self.httpd = SocketServer.TCPServer(("", self.port), self.handler)
+        try:
+            self.httpd = socketserver.TCPServer(("", self.port), self.handler)
+        except:
+            print("Server fucked up")
         self.httpd.serve_forever()
 
     def main_loop(self):
