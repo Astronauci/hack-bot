@@ -38,18 +38,18 @@ class HackBot(object):
         self.irc = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         print("Estabilishing connection...")
         self.irc.connect((network, 6667))
-        self.irc.send("")
-        self.irc.send("USER %s %s %s :salty bot\n" % (self.nick, self.nick, self.nick))
-        self.irc.send("NICK %s\n" % self.nick)
-        self.irc.send("JOIN %s\n" % self.channel)
+        self.irc.send(b"")
+        self.irc.send("USER {} {} {} :salty bot\n".format(self.nick, self.nick, self.nick).encode())
+        self.irc.send("NICK {}\n".format(self.nick).encode())
+        self.irc.send("JOIN {}\n".format(self.channel).encode())
         print("Connected!")
 
     def ping(self):
         logging.warning("ping")
-        self.irc.send("PONG :Pong\n")
+        self.irc.send(b"PONG :Pong\n")
 
     def sendMsg(self, msg):
-        self.irc.send("PRIVMSG {} :{}\n".format(self.channel, msg))
+        self.irc.send("PRIVMSG {} :{}\n".format(self.channel, msg).encode())
 
     def check_for_command(self, irc_msg, command, return_command):
         if irc_msg.find(command) != -1:
@@ -73,8 +73,8 @@ class HackBot(object):
         self.sendMsg("Hello world!")
         while alive:
             self.ircmsg = self.irc.recv(2048)
-            self.ircmsg = self.ircmsg.strip('\n\r')
-            self.check_for_command(self.ircmsg, "PING :", self.ping)
+            self.ircmsg = self.ircmsg.strip(b'\n\r')
+            self.check_for_command(self.ircmsg, b"PING :", self.ping)
 
 if __name__ == "__main__":
     r2g2 = HackBot(network, channel, nick)
