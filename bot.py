@@ -64,17 +64,20 @@ class HackBot(object):
             print("Server fucked up")
         self.httpd.serve_forever()
 
-    def main_loop(self):
+    def parse_irc_messages(self):
         alive = True
+        while alive:
+            self.ircmsg = self.irc.recv(2048)
+            self.ircmsg = self.ircmsg.strip(b'\n\r')
+            self.check_for_command(self.ircmsg, b"PING :", self.ping)
+
+    def main_loop(self):
         logging.warning("Running main loop")
         self.thread = threading.Thread(target=self.start_server)
         self.thread.daemon = True
         self.thread.start()
         self.sendMsg("Hello world!")
-        while alive:
-            self.ircmsg = self.irc.recv(2048)
-            self.ircmsg = self.ircmsg.strip(b'\n\r')
-            self.check_for_command(self.ircmsg, b"PING :", self.ping)
+        self.parse_irc_messages()
 
 if __name__ == "__main__":
     r2g2 = HackBot(network, channel, nick)
