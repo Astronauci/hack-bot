@@ -1,10 +1,10 @@
+import asyncio
 import cgi
 import logging
 import socket
 import http.server
 import socketserver
 import threading
-import queue
 #from bot_config import *
 
 network = 'irc.freenode.net'
